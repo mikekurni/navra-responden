@@ -8,6 +8,15 @@ st.set_page_config(
     layout="centered"
 )
 
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 # Display Title and Description
 st.title("Entri Data Konstituen")
 st.image(".statics/navra_1.jpeg", caption="Mbak Navra", width=250)
