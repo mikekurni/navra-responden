@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "navra-entry-form",
+  "private_key_id": "bba4738a6c8c7512c24bbb84c5461c4af07ba4b4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC5EdajD4Io32x0\nQFCm9d9CfSBJ6ZAYacbIarMivug8v3z1GdjOeAwVtW5mYCxY3fdjNUK9WJgp25R6\nHxLluOMtLSQLgEz3/S151STLhJseM943J7vWPYR5dtDp+ZRcQTIouUs7AX9dr0MJ\niKmfHgdSrSk2j8DRUaa7Ad6sgzsa/xfzuiiDQmWUZ9HFTh60+F64ZrFzcv15Ogu7\nvOJBUuBiLuNjSsaMNZ674kCg3gSvPi8QfMkaLu037JYzgUmLj2PLUKmPyG6vUZjz\nnajYFuPOqk5OJzm/PvfqSwLxaOlkTJUj++ez4NSWPZo5WTjLbg0ki4u6XI3l+01O\nGDa19RIZAgMBAAECggEAMe78tPlBuqpxtjoGKM4tI2DkXdztWpDrp/aWB7lvqrhV\nzEHhi++6/v55X5jyTjXxgiyEKddmEuEiggKxVBcbAHzt/UZsPfrrErSuHVVVjwQa\noFIRrb/iZu1md8K1w2B52qAICs8gINRhZ4iej4aIHkgHVyfZNADuVgWuoWg1Ada9\nksia8MDzpxyS7kCLFWEZJvvYhHuDlCZLEA6klmqYaL80pW4F2LPxw8VLXGMJIsFh\nk/Q18v6eh00uzFW40s40Mfs5KBs3wMwyuof2dA94FExc6iE3xL1SYSjeWhxwfg/r\nrTwTnCEZd3wwMwcWAZQv19j3fy1OoFYzC9GUdjItGwKBgQDdw99RTrq5FhrO935Q\nIfne3fYFGs5uoTU8589BCVoQ9ijouvDcAfn2DCZdDAUObRx8yN5x4ysc6bkvIGdc\nYe87ErXVx9CMgZ2d+AF7iKF8Zs9iFzaJ6NKZbbnlILeImR3cjMF9yfIyTmeOTxdC\nlr4nkGw19JIRJjPNVxppSOlPawKBgQDVo8RgG3pifYBTf1CLRrdgt9Em4T0I+01y\nN4RApR+BDprj0xJ49cLZ5IaPEreZFz+ukZK3cckivBq3hr2hJcnl4BnQwf2pf6AN\nNsyGbyEkb4spnxUzaRoKYRlqYzHUOxELuAQpRLQg6jURSlWFPfUK+yA/2B9X4xmT\nNIxd0HCZiwKBgBo25DgVSWdFoKekg+7vBT1+GW3jDFHxhnyLnmk+tMHah11zc7Ne\nHHEkYIiROivJZBuwFvN5eggx7K0QdIdsID5oaMw7kYB6depNfcdfkE9HS+55df35\nYqO2X8ohAvEHwIrorJq0+4dM01r0KHi7nwDIRrJeFcInNOpqCHo3nzS/AoGBAM4X\nBlhECaK7OLDTj2pb1IibqkrcW1mvuz0kaxNFdwezhB2kvxwq0EYL2vZn8u7e65LG\nYYdPX91/IjLK62FqJ8L2lVC54q7BLC+zHkfNKmaQp+mFyhjnGbTLiI4FlMsME9x/\nLpx052MdLAY69Bbt9tYZ/Tk5jrrknAZSWdoiOo0TAoGBAK2RaVRwQlxjiKpG0JM8\n/bFpMfsDj/LOtMgx0cavaK1JPNvGDbdjNnwiVmD/BC5kJOAf+1MV16uV8dC1Tyak\nZyjBeCT0OjPwV8mOCvuD82TzRy+sAgIz9JR6PNwbOzbVfyMLgfWNU0vFZJQ/hwc6\nc63gkqIgfw98OWuWmq8eP+e7\n-----END PRIVATE KEY-----\n",
+  "client_email": "gsheets-navra-access@navra-entry-form.iam.gserviceaccount.com",
+  "client_id": "113826545241573801972",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gsheets-navra-access%40navra-entry-form.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
