@@ -13,6 +13,7 @@ hide_streamlit_style = """
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden !important;}
             header {visibility: hidden;}
+            div.embeddedAppMetaInfoBar_container__DxxL1 {visibility: hidden;}
             </style>
             """
 
@@ -76,10 +77,10 @@ with st.form(key="respondent_form", clear_on_submit=True):
     # nik = st.text_input(label="Nomor Induk Kependudukan (NIK):red[*]", max_chars=16, placeholder="NIK/No. KTP")
     nik = str(st.number_input(label="Nomor Induk Kependudukan (NIK):red[*]", min_value=1, value=None, placeholder="NIK/No. KTP"))
     dusun_jalan = st.text_input(label="Dusun/Jalan", placeholder="Alamat/dusun/jalan").upper()
-    rt = st.number_input(label="RT:red[*]", min_value=1, value=None, step=1, placeholder="RT")
-    rw = st.number_input(label="RW:red[*]", min_value=1, value=None, step=1, placeholder="RW")
+    rt = st.number_input(label="RT:red[*]", min_value=1, value=None, step=1, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
+    rw = st.number_input(label="RW:red[*]", min_value=1, value=None, step=1, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
     desa = st.selectbox(label="Desa:red[*]", options=list_desa, index=None, placeholder="Pilih desa...")
-    no_selular = st.number_input(label="Nomor HP", min_value=1, value=None, placeholder="No. HP Responden")
+    no_selular = st.number_input(label="Nomor HP", min_value=1, value=None, placeholder="No. HP Responden", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
     keterangan = st.text_area(label="Keterangan Tambahan")
 
     # Mark mandatory fields
