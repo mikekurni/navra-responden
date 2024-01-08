@@ -13,7 +13,7 @@ hide_streamlit_style = """
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden !important;}
             header {visibility: hidden;}
-            div.viewerBadge_link__qRIco {visibility: hidden;}
+            a.viewerBadge_container__r5tak styles_viewerBadge__CvC9N {visibility: hidden;}
             </style>
             """
 
