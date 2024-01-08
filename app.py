@@ -75,7 +75,7 @@ with st.form(key="respondent_form", clear_on_submit=True):
     nama_koordinator = st.selectbox(label="Koordinator:red[*]", options=list_koordinator, index=None, placeholder="Pilih koordinator...")
     nama_responden = st.text_input(label="Responden:red[*]", placeholder="Nama responden")
     # nik = st.text_input(label="Nomor Induk Kependudukan (NIK):red[*]", max_chars=16, placeholder="NIK/No. KTP")
-    nik = st.number_input(label="Nomor Induk Kependudukan (NIK):red[*]", min_value=1, value=None, placeholder="NIK/No. KTP")
+    nik = str(st.number_input(label="Nomor Induk Kependudukan (NIK):red[*]", min_value=1, value=None, placeholder="NIK/No. KTP"))
     dusun_jalan = st.text_input(label="Dusun/Jalan", placeholder="Alamat/dusun/jalan")
     rt = st.number_input(label="RT:red[*]", min_value=1, value=None, step=1, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
     rw = st.number_input(label="RW:red[*]", min_value=1, value=None, step=1, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
