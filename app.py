@@ -13,7 +13,7 @@ hide_streamlit_style = """
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden !important;}
             header {visibility: hidden;}
-            div.embeddedAppMetaInfoBar_container__DxxL1 {visibility: hidden;}
+            div.viewerBadge_link__qRIco {visibility: hidden;}
             </style>
             """
 
