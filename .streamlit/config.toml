@@ -4,3 +4,5 @@ font="monospace"
 
 [server]
 enableStaticServing = true
+runOnSave = true
+port = 8501

@@ -1,37 +1,44 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+from os import listdir
 
+# Page configuration
 st.set_page_config(
     page_title="Entri Data Konstituen",
     page_icon="🛡️",
     layout="centered"
 )
 
+# Hide streamlit
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden !important;}
             header {visibility: hidden;}
-            a.viewerBadge_container__r5tak styles_viewerBadge__CvC9N {visibility: hidden;}
             </style>
             """
 
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+# img_dir = r"./static/"
+# files = listdir(img_dir)
+
 # Display Title and Description
-st.title("Entri Data Konstituen")
-st.image(".statics/navra_1.jpeg", caption="Mbak Navra", width=250)
-st.subheader("Mbak Navra Bersama Masyarakat")
+st.title("Mbak Navra Bersama Masyarakat", anchor=False)
+st.image("static/navra_1.jpeg", width=250, use_column_width="auto")
+st.subheader("Entri Data Konstituen")
 st.markdown("""
-Aplikasi entri data konstituen Tim Sukses Mbak Navra.  **Dapil 5. Kecamatan Taman - Sukodono**.
+Aplikasi entri data konstituen Tim Sukses Mbak Navra.
+            
+**Dapil 5. Kecamatan Taman - Sukodono**.
 """)
 
 # Establishing a Google Sheets Connection
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 # Fetch existing constituent data
-existing_data = conn.read(worksheet="DATA", usecols=list(range(11)), ttl=5)
+existing_data = conn.read(worksheet="DATA", usecols=list(range(10)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 existing_data["NIK"] = existing_data["NIK"].astype(str).replace('.', '')
 existing_data["NO_SELULAR"] = existing_data["NO_SELULAR"].astype(str).replace('.', '')
@@ -49,36 +56,42 @@ total_koordinator_aktif = existing_data.NAMA_KOORDINATOR.nunique()
 total_desa = desa_data.DESA.count()
 total_desa_terdata = existing_data.DESA.nunique()
 # total_phone = existing_data.NO_SELULAR.nunique()
-list_koordinator = koordinator_data.NAMA.dropna()
-list_desa = desa_data.DESA.dropna()
+list_koordinator = koordinator_data.NAMA.dropna().values.tolist()
+list_desa = desa_data.DESA.dropna().values.tolist()
 
+st.header("")
 col1, col2, col3 = st.columns(3)
 col1.metric(label="Total Responden", value=total_responden)
 col2.metric(label="Total Koordinator", value=total_koordinator, delta=(f'{total_koordinator_aktif} Aktif'), delta_color="off")
 col3.metric(label="Total Desa", value=total_desa, delta=(f"{total_desa_terdata} Terdata"), delta_color="off")
 
+st.header("")
+
 # Choosing Actions
 action = st.selectbox(
-    "Choose an Action",
+    "Pilih Aksi",
     [
         "Tambah Data Baru",
-        "Edit Data",
+        "Ubah Data Responden",
     ],
 )
 
+st.divider()
+
 if action == "Tambah Data Baru":
-    st.markdown("Tambah data responden baru pada formulir di bawah ini.")
+    st.header("Tambah data responden baru pada formulir di bawah ini", divider="green", anchor=False)
+    st.header("")
     with st.form(key="responden_form", clear_on_submit=True):
         tanggal = st.date_input("Tanggal Data Diambil")
         nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=None, placeholder="Pilih koordinator...")
         nama_responden = st.text_input("Responden:red[*]", placeholder="Nama responden")
-        nik = str(st.number_input("Nomor Induk Kependudukan (NIK):red[*]", min_value=1, value=None, placeholder="NIK/No. KTP"))
+        nik = str(st.number_input("Nomor Induk Kependudukan (NIK):red[*]", min_value=0, value=0, placeholder="NIK/No. KTP"))
         dusun_jalan = st.text_input("Dusun/Jalan", placeholder="Alamat/dusun/jalan")
-        rt = st.number_input("RT:red[*]", min_value=1, value=None, step=1, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
-        rw = st.number_input("RW:red[*]", min_value=1, value=None, step=1, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
+        rt = st.number_input("RT:red[*]", min_value=1, value=1, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
+        rw = st.number_input("RW:red[*]", min_value=1, value=1, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
         desa = st.selectbox("Desa :red[*]", options=list_desa, index=None, placeholder="Pilih desa...")
-        no_selular = st.number_input("Nomor HP", min_value=1, value=None, placeholder="No. HP Responden", help="Tidak perlu menambahkan angka 0 (nol) di depan")
-        keterangan = st.text_area("Keterangan Tambahan", placeholder="Tambahkan keterangan")
+        no_selular = st.number_input("Nomor HP", min_value=0, value=0, placeholder="No. HP Responden", help="Tidak perlu menambahkan angka 0 (nol) di depan")
+        keterangan = st.text_area("Keterangan Tambahan", value="None", placeholder="Tambahkan keterangan")
 
         # Mark mandatory fields
         st.markdown(":red[*wajib diisi]")
@@ -114,18 +127,88 @@ if action == "Tambah Data Baru":
                 # Update Google Sheets with new respondent data
                 conn.update(worksheet="DATA", data=update_df)
 
-                st.toast("Data berhasil ditambahkan!", icon='🎉')
+                st.toast(f"Data responden {nama_responden} berhasil ditambahkan!", icon='🎉')
 
-elif action == "Update Existing Vendor":
-    st.markdown("Pilih data yang hendak diubah.")
+elif action == "Ubah Data Responden":
+    st.header("Pilih data responden yang hendak diubah", divider="orange", anchor=False)
+    st.header("")
 
-    responden_to_update = st.selectbox(
-        "Cari NIK responden yang hendak diubah", options=existing_data["NIK"].tolist()
-    )
+    with st.expander("Cara ubah data:"):
+        st.write(
+            """
+            Untuk mengubah data ikuti langkah berikut ini:
+            1. Pilih Nama Koordinator
+            2. Aplikasi menampilkan data Nama Responden menurut Nama Koordinator
+            3. Lakukan perubahan data seperlunya.
+            4. Setelah selesai melakukan perubahan. Tekan tombol **:red[Ubah Data Responden]**
+            """
+        )
 
-    responden_data = existing_data[existing_data["NIK"] == responden_to_update].iloc[0]
+    st.markdown("")
 
-    st.dataframe(responden_data)
+    koor = st.selectbox("Pilih Koordinator:red[*]", options=list_koordinator)
+    mask_koor = existing_data["NAMA_KOORDINATOR"].values == koor
+    koor_data = existing_data.iloc[mask_koor]
 
-    # with st.form(key="update_responden_data"):
-    #     tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]))
+    responden = st.selectbox("Cari Nama Responden yang hendak diubah:red[*]", options=koor_data["NAMA_RESPONDEN"].tolist())
+    responden_data = existing_data[existing_data["NAMA_RESPONDEN"] == responden].iloc[0]
+
+    st.divider()
+
+    # st.dataframe(responden_data,use_container_width=True)
+
+    with st.form(key="update_responden_data"):
+        tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]), disabled=True)
+        nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=list_koordinator.index(responden_data["NAMA_KOORDINATOR"]), disabled=True)
+        nama_responden = st.text_input("Responden:red[*]", value=responden_data["NAMA_RESPONDEN"])
+        nik = st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=int(float(responden_data["NIK"])))
+        dusun_jalan = st.text_input("Dusun/Jalan", value=responden_data["DUSUN_JALAN"])
+        rt = st.number_input("RT:red[*]", value=int(float(responden_data["RT"])), format="%d")
+        rw = st.number_input("RW:red[*]", value=int(float(responden_data["RW"])), format="%d")
+        desa = st.selectbox("Desa:red[*]", options=list_desa, index=list_desa.index(responden_data["DESA"]))
+        no_selular = st.number_input("No. HP", value=int(float(responden_data["NO_SELULAR"])), format="%d")
+        keterangan = st.text_area("Keterangan Tambahan", value=responden_data["KETERANGAN"])
+
+        # Mark mandatory fields
+        st.markdown(":red[*wajib diisi]")
+
+        update_button = st.form_submit_button(label="Ubah Data Responden", type="primary")
+
+        if update_button:
+            if not nama_responden or not desa or not rt or not rw or not nik:
+                st.toast("Pastikan isian yang diwajibkan sudah terisi.", icon='✳️')
+            else:
+                # Removing old entry
+                existing_data.drop(
+                    existing_data[
+                        existing_data["NAMA_RESPONDEN"] == responden
+                    ].index,
+                    inplace=True
+                )
+
+                # Create updated data entry
+                updated_responden_data = pd.DataFrame(
+                    [
+                        {
+                            "TANGGAL": tanggal.strftime("%d-%m,-%Y"),
+                            "NAMA_KOORDINATOR": nama_koordinator,
+                            "NAMA_RESPONDEN": nama_responden.upper(),
+                            "NIK": str(nik),
+                            "RT": rt,
+                            "RW": rw,
+                            "DESA": desa.upper(),
+                            "NO_SELULAR": str(no_selular),
+                            "KETERANGAN": keterangan.upper(),
+                        }
+                    ]
+                )
+
+                # Adding updated data to the dataframe
+                updated_df = pd.concat(
+                    [existing_data, updated_responden_data], ignore_index=True
+                )
+
+                # Updated Google Sheets with edited responden data
+                conn.update(worksheet="DATA", data=updated_df)
+
+                st.toast(f"Data responden {nama_responden} berhasil diubah!", icon='🎉')
