@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 from os import listdir
+from datetime import date
 
 # Page configuration
 st.set_page_config(
@@ -73,6 +74,7 @@ action = st.selectbox(
     [
         "Tambah Data Baru",
         "Ubah Data Responden",
+        "Data per Koordinator"
     ],
 )
 
@@ -108,7 +110,7 @@ if action == "Tambah Data Baru":
                 responden_data = pd.DataFrame(
                     [
                         {
-                            "TANGGAL": tanggal.strftime("%d-%m-%Y"),
+                            "TANGGAL": tanggal.strftime("%Y/%m/%d"),
                             "NAMA_KOORDINATOR": nama_koordinator.upper(),
                             "NAMA_RESPONDEN": nama_responden.upper(),
                             "NIK": str(nik),
@@ -190,7 +192,7 @@ elif action == "Ubah Data Responden":
                 updated_responden_data = pd.DataFrame(
                     [
                         {
-                            "TANGGAL": tanggal.strftime("%d-%m,-%Y"),
+                            "TANGGAL": tanggal.strftime("%Y/%m/%d"),
                             "NAMA_KOORDINATOR": nama_koordinator,
                             "NAMA_RESPONDEN": nama_responden.upper(),
                             "NIK": str(nik),
@@ -212,3 +214,39 @@ elif action == "Ubah Data Responden":
                 conn.update(worksheet="DATA", data=updated_df)
 
                 st.toast(f"Data responden {nama_responden} berhasil diubah!", icon='🎉')
+        
+elif action == "Data per Koordinator":
+    st.header("Pilih nama Koordinator", divider="blue", anchor=False)
+    st.header("")
+
+    koor = st.selectbox("Pilih Koordinator:red[*]", options=list_koordinator)
+    mask_koor = existing_data["NAMA_KOORDINATOR"].values == koor
+    koor_data = existing_data.iloc[mask_koor]
+
+    st.subheader("")
+    st.markdown(f"### Data seluruh responden dari Koordinator :blue[{koor}]")
+
+    st.markdown("")
+
+    total_koor_data = koor_data["NAMA_RESPONDEN"].count()
+    # today = date.today()
+
+    # st.subheader(f"Koordinator :blue[{koor}] telah mendata :green[{total_koor_data}] responden per tanggal :rainbow[{today}]", anchor=None)
+
+    st.subheader("")
+
+    st.metric("Total Responden", value=total_koor_data)
+
+    st.dataframe(
+        koor_data, 
+        column_config={
+        "NIK": st.column_config.NumberColumn(
+                format="%d",
+            ),
+        "NO_SELULAR": st.column_config.NumberColumn(
+                format="%d",
+            ),
+        },
+        hide_index=True,
+        use_container_width=True,
+    )
