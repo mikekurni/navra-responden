@@ -32,7 +32,7 @@ Aplikasi entri data konstituen Tim Sukses Mbak Navra.
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 # Fetch existing constituent data
-existing_data = conn.read(worksheet="DATA", usecols=list(range(11)), ttl=5)
+existing_data = conn.read(worksheet="DATA", usecols=list(range(10)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 existing_data["NIK"] = existing_data["NIK"].astype(str).replace('.', '')
 existing_data["NO_SELULAR"] = existing_data["NO_SELULAR"].astype(str).replace('.', '')
@@ -218,7 +218,7 @@ elif action == "Ubah Data Responden":
                 st.toast(f"Data responden {nama_responden} berhasil diubah!", icon='🎉')
         
 elif action == "Data per Koordinator":
-    st.header("Pilih nama Koordinator", divider="blue", anchor=False)
+    st.header("Tampilkan Data Responden Berdasar Koordinator", divider="blue", anchor=False)
     st.header("")
 
     koor = st.selectbox("Pilih Koordinator:red[*]", options=list_koordinator)
@@ -226,7 +226,7 @@ elif action == "Data per Koordinator":
     koor_data = existing_data.iloc[mask_koor]
 
     st.subheader("")
-    st.markdown(f"### Data seluruh responden dari Koordinator :blue[{koor}]")
+    st.markdown(f"### Data responden Koordinator :blue[{koor}]")
 
     st.markdown("")
 
@@ -242,10 +242,20 @@ elif action == "Data per Koordinator":
     st.dataframe(
         koor_data, 
         column_config={
+        "NAMA_KOORDINATOR": st.column_config.TextColumn(
+                "NAMA KOORDINATOR",
+            ),
+        "NAMA_RESPONDEN": st.column_config.TextColumn(
+                "NAMA RESPONDEN",
+            ),
+        "DUSUN_JALAN": st.column_config.TextColumn(
+                "DUSUN/JALAN",
+            ),
         "NIK": st.column_config.NumberColumn(
                 format="%d",
             ),
         "NO_SELULAR": st.column_config.NumberColumn(
+                "NO. HP",
                 format="%d",
             ),
         },
