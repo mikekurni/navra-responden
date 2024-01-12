@@ -2,7 +2,10 @@ import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 from os import listdir
-from datetime import date
+from datetime import date, datetime, timedelta
+
+
+pd.options.mode.chained_assignment = None
 
 # Page configuration
 st.set_page_config(
@@ -135,6 +138,8 @@ elif action == "Ubah Data Responden":
     st.header("Pilih data responden yang hendak diubah", divider="orange", anchor=False)
     st.header("")
 
+    list_koordinator = existing_data["NAMA_KOORDINATOR"].unique()
+
     with st.expander("Cara ubah data:"):
         st.write(
             """
@@ -152,6 +157,8 @@ elif action == "Ubah Data Responden":
     mask_koor = existing_data["NAMA_KOORDINATOR"].values == koor
     koor_data = existing_data.iloc[mask_koor]
 
+    st.write(koor_data)
+
     responden = st.selectbox("Cari Nama Responden yang hendak diubah:red[*]", options=koor_data["NAMA_RESPONDEN"].tolist())
     responden_data = existing_data[existing_data["NAMA_RESPONDEN"] == responden].iloc[0]
 
@@ -160,8 +167,8 @@ elif action == "Ubah Data Responden":
     # st.dataframe(responden_data,use_container_width=True)
 
     with st.form(key="update_responden_data"):
-        tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]), disabled=True)
-        nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=list_koordinator.index(responden_data["NAMA_KOORDINATOR"]), disabled=True)
+        tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]), disabled=True))
+        nama_koordinator = st.selectbox("Koordinator:red[*]", options=koor_data["NAMA_KOORDINATOR"].unique(), disabled=True)
         nama_responden = st.text_input("Responden:red[*]", value=responden_data["NAMA_RESPONDEN"])
         nik = st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=int(float(responden_data["NIK"])))
         dusun_jalan = st.text_input("Dusun/Jalan", value=responden_data["DUSUN_JALAN"])
@@ -216,34 +223,67 @@ elif action == "Ubah Data Responden":
                 st.toast(f"Data responden {nama_responden} berhasil diubah!", icon='🎉')
         
 elif action == "Data per Koordinator":
-    st.header("Pilih nama Koordinator", divider="blue", anchor=False)
+    st.header("Tampilkan Data Responden Berdasar Koordinator", divider="blue", anchor=False)
     st.header("")
+
+    list_koordinator = existing_data["NAMA_KOORDINATOR"].unique()
 
     koor = st.selectbox("Pilih Koordinator:red[*]", options=list_koordinator)
     mask_koor = existing_data["NAMA_KOORDINATOR"].values == koor
     koor_data = existing_data.iloc[mask_koor]
 
+    koor_data["TANGGAL"] = pd.to_datetime(koor_data["TANGGAL"]).dt.date
+
+    date_range = koor_data["TANGGAL"]
+
+    # start_date = mask_date.min()
+    # end_date = mask_date.max()
+
+    st.write("\n")
+
+    date_slider = st.select_slider(
+        'Tampilkan data responden berdasar tanggal input',
+        options=date_range,
+    )
+
+    mask_date = koor_data["TANGGAL"].values == date_slider
+    responden_date = koor_data.iloc[mask_date]
+    # st.write(responden_date)
+
     st.subheader("")
-    st.markdown(f"### Data seluruh responden dari Koordinator :blue[{koor}]")
+    st.markdown(f"### Data Responden Koordinator :blue[{koor}]")
 
     st.markdown("")
 
-    total_koor_data = koor_data["NAMA_RESPONDEN"].count()
+    total_per_date = responden_date["NAMA_RESPONDEN"].count()
+    total_perolehan = koor_data["NAMA_RESPONDEN"].count()
     # today = date.today()
-
-    # st.subheader(f"Koordinator :blue[{koor}] telah mendata :green[{total_koor_data}] responden per tanggal :rainbow[{today}]", anchor=None)
 
     st.subheader("")
 
-    st.metric("Total Responden", value=total_koor_data)
+    col4, col5 = st.columns(2, gap="medium")
+    col4.metric(f"Total Responden per Tanggal", value=total_per_date)
+    col5.metric("Total Perolehan\nResponden Koordinator", value=total_perolehan)
 
     st.dataframe(
-        koor_data, 
+        responden_date, 
         column_config={
+        "NAMA_KOORDINATOR": st.column_config.TextColumn(
+                "NAMA KOORDINATOR",
+                width="small",
+            ),
+        "NAMA_RESPONDEN": st.column_config.TextColumn(
+                "NAMA RESPONDEN",
+            ),
+        "DUSUN_JALAN": st.column_config.TextColumn(
+                "DUSUN/JALAN",
+            ),
         "NIK": st.column_config.NumberColumn(
+                width="medium",
                 format="%d",
             ),
         "NO_SELULAR": st.column_config.NumberColumn(
+                "NO. HP",
                 format="%d",
             ),
         },
