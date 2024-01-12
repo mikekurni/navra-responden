@@ -167,7 +167,7 @@ elif action == "Ubah Data Responden":
     # st.dataframe(responden_data,use_container_width=True)
 
     with st.form(key="update_responden_data"):
-        tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]), disabled=True))
+        tanggal = st.date_input("Tanggal Data Diambil", value=pd.to_datetime(responden_data["TANGGAL"]), disabled=True)
         nama_koordinator = st.selectbox("Koordinator:red[*]", options=koor_data["NAMA_KOORDINATOR"].unique(), disabled=True)
         nama_responden = st.text_input("Responden:red[*]", value=responden_data["NAMA_RESPONDEN"])
         nik = st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=int(float(responden_data["NIK"])))
