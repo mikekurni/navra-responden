@@ -156,8 +156,6 @@ elif action == "Ubah Data Responden":
     mask_koor = existing_data["NAMA_KOORDINATOR"].values == koor
     koor_data = existing_data.iloc[mask_koor]
 
-    st.write(koor_data)
-
     responden = st.selectbox("Cari Nama Responden yang hendak diubah:red[*]", options=koor_data["NAMA_RESPONDEN"].tolist())
     responden_data = existing_data[existing_data["NAMA_RESPONDEN"] == responden].iloc[0]
 
