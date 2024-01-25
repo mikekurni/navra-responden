@@ -10,7 +10,7 @@ st.set_page_config(
 
 hide_streamlit_style = """
             <style>
-            #MainMenu {visibility: hidden;}
+            # MainMenu {visibility: hidden;}
             footer {visibility: hidden !important;}
             header {visibility: hidden;}
             </style>
@@ -76,7 +76,8 @@ action = st.selectbox(
     [
         "Tambah Data Baru",
         "Ubah Data Responden",
-        "Data per Koordinator"
+        "Data per Koordinator",
+        "Cek Data DPT NGARESREJO"
     ],
 )
 
@@ -85,6 +86,7 @@ st.divider()
 if action == "Tambah Data Baru":
     st.header("Tambah data responden baru pada formulir di bawah ini", divider="green", anchor=False)
     st.header("")
+
     with st.form(key="responden_form", clear_on_submit=True):
         tanggal = st.date_input("Tanggal Data Diambil")
         nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=None, placeholder="Pilih koordinator...")
@@ -104,7 +106,7 @@ if action == "Tambah Data Baru":
 
         if submit_button:
             if not nama_koordinator or not nama_responden or not desa or not rt or not rw or not nik:
-                st.toast("Nama responden sudah terdata di dalam database.", icon='💽')
+                st.toast("Pastikan formulir dengan tanda wajib untuk diisi.", icon='💽')
             elif existing_data["NIK"].str.contains(nik).any():
                 st.toast("Nama responden sudah terdata di dalam database.", icon='💽')
             else:
@@ -287,3 +289,37 @@ elif action == "Data per Koordinator":
         hide_index=True,
         use_container_width=True,
     )
+
+elif action == "Cek Data DPT NGARESREJO":
+    st.header("Cari Data DPT KELURAHAN NGARESREJO")
+
+    ngaresrejo = """Khusus untuk Kelurahan NGARESREJO, Koordinator bisa cek data DPT dengan memasukkan NIK."""
+    st.markdown(ngaresrejo)
+
+    df_ngaresrejo = conn.read(worksheet="DPT-NGARESREJO", usecols=list(range(7)), ttl=600)
+    # df_ngaresrejo["NIK"].astype(str).replace('.', ',')
+    
+    search_nik = st.text_input("Cari NIK DPT NGARESREJO")
+
+    # Check if the search box is not empty
+    if search_nik:
+        # Use boolean masking to filter the DataFrame
+        search_mask = df_ngaresrejo['NIK'].astype(str).str.contains(search_nik)
+        search_results = df_ngaresrejo[search_mask]
+
+        # Display the search results
+        if not search_results.empty:
+            st.write("Hasil pencarian:")
+            st.dataframe(
+                search_results,
+                column_config={
+                    "NIK": st.column_config.NumberColumn(
+                    width="medium",
+                    format="%d",
+                    )
+                },
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.warning("Data NIK tidak ditemukan")
