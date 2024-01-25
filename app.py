@@ -296,7 +296,7 @@ elif action == "Cek Data DPT NGARESREJO":
     ngaresrejo = """Khusus untuk Kelurahan NGARESREJO, Koordinator bisa cek data DPT dengan memasukkan NIK."""
     st.markdown(ngaresrejo)
 
-    df_ngaresrejo = conn.read(worksheet="DPT-NGARESREJO", usecols=list(range(7)), ttl=600)
+    df_ngaresrejo = conn.read(worksheet="DPT-NGARESREJO", usecols=list(range(8)), ttl=600)
     # df_ngaresrejo["NIK"].astype(str).replace('.', ',')
     
     search_nik = st.text_input("Cari NIK DPT NGARESREJO")
@@ -307,19 +307,30 @@ elif action == "Cek Data DPT NGARESREJO":
         search_mask = df_ngaresrejo['NIK'].astype(str).str.contains(search_nik)
         search_results = df_ngaresrejo[search_mask]
 
+        # Convert search_results DataFrame to a dictionary
+        search_results_dict = search_results.to_dict(orient='records')
+
         # Display the search results
         if not search_results.empty:
             st.write("Hasil pencarian:")
-            st.dataframe(
-                search_results,
-                column_config={
-                    "NIK": st.column_config.NumberColumn(
-                    width="medium",
-                    format="%d",
-                    )
-                },
-                hide_index=True,
-                use_container_width=True,
-            )
+            with st.container(border=True):
+                st.markdown(f"**NIK:** {search_results_dict[0]['NIK']}")
+                st.markdown(f"**NAMA:** {search_results_dict[0]['NAMA']}")
+                st.markdown(f"**KELAMIN:** {search_results_dict[0]['KELAMIN']}")
+                st.markdown(f"**ALAMAT:** {search_results_dict[0]['ALAMAT']}")
+                st.markdown(f"**RT:** {search_results_dict[0]['RT']}")
+                st.markdown(f"**RW:** {search_results_dict[0]['RW']}")
+                st.markdown(f"**TPS:** {search_results_dict[0]['TPS']}")
+            # st.dataframe(
+            #     search_results_dict,
+            #     column_config={
+            #         "NIK": st.column_config.NumberColumn(
+            #         width="medium",
+            #         format="%d",
+            #         )
+            #     },
+            #     hide_index=True,
+            #     use_container_width=True,
+            # )
         else:
             st.warning("Data NIK tidak ditemukan")
