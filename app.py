@@ -77,7 +77,7 @@ action = st.selectbox(
         "Tambah Data Baru",
         "Ubah Data Responden",
         "Data per Koordinator",
-        "Cek Data DPT NGARESREJO"
+        "Cek dan Tambah Data"
     ],
 )
 
@@ -290,22 +290,42 @@ elif action == "Data per Koordinator":
         use_container_width=True,
     )
 
-elif action == "Cek Data DPT NGARESREJO":
-    st.header("Cari Data DPT KELURAHAN NGARESREJO")
+elif action == "Cek dan Tambah Data":
+    st.header("Cari Data DPT Kecamatan Sukodono")
 
-    ngaresrejo = """Khusus untuk Kelurahan NGARESREJO, Koordinator bisa cek data DPT dengan memasukkan NIK."""
-    st.markdown(ngaresrejo)
+    ngaresrejo = """
+    Khusus untuk Kelurahan:
+    - Anggaswangi
+    - Bangsri
+    - Cangkirsari
+    - Jogosatru
+    - Jumputrejo
+    - Ngaresrejo
 
-    df_ngaresrejo = conn.read(worksheet="DPT-NGARESREJO", usecols=list(range(8)), ttl=600)
-    # df_ngaresrejo["NIK"].astype(str).replace('.', ',')
+    Koordinator bisa cek data DPT dengan memasukkan NIK.
+    """
+    with st.expander("Informasi"):
+        st.markdown(ngaresrejo)
     
-    search_nik = st.text_input("Cari NIK DPT NGARESREJO")
 
-    # Check if the search box is not empty
-    if search_nik:
+    @st.cache_data
+    def get_data(sheet_name):
+        data = conn.read(worksheet=sheet_name, usecols=list(range(8)), ttl=600)
+        return data
+    
+    kecamatan = st.selectbox("Pilih Kecamatan", ["Sukodono"],index=0,disabled=True)
+    kelurahan = st.selectbox("Pilih Kelurahan", ("ANGGASWANGI","BANGSRI","CANGKIRSARI","JOGOSATRU","JUMPUTREJO","NGARESREJO"))
+
+    # search_nik = st.text_input(f"Cari NIK DPT {kelurahan}")
+    search_nik = str(st.number_input("Cari NIK DPT", min_value=0, value=0, placeholder="NIK Responden"))
+
+    # # Check if the search box is not empty
+    if search_nik != "0":
+        df_cari_data = get_data(kelurahan)
+
         # Use boolean masking to filter the DataFrame
-        search_mask = df_ngaresrejo['NIK'].astype(str).str.contains(search_nik)
-        search_results = df_ngaresrejo[search_mask]
+        search_mask = df_cari_data['NIK'].astype(str).str.contains(search_nik)
+        search_results = df_cari_data[search_mask]
 
         # Convert search_results DataFrame to a dictionary
         search_results_dict = search_results.to_dict(orient='records')
@@ -314,23 +334,69 @@ elif action == "Cek Data DPT NGARESREJO":
         if not search_results.empty:
             st.write("Hasil pencarian:")
             with st.container(border=True):
-                st.markdown(f"**NIK:** {search_results_dict[0]['NIK']}")
-                st.markdown(f"**NAMA:** {search_results_dict[0]['NAMA']}")
-                st.markdown(f"**KELAMIN:** {search_results_dict[0]['KELAMIN']}")
+                nik = int(search_results_dict[0]['NIK'])
+                st.markdown(f"**NIK:** {nik}")
+                nama = search_results_dict[0]['NAMA']
+                st.markdown(f"**NAMA:** {nama}")
+                kelamin = search_results_dict[0]['KELAMIN']
+                st.markdown(f"JENIS KELAMIN: {search_results_dict[0]['KELAMIN']}")
+                alamat = search_results_dict[0]['ALAMAT']
                 st.markdown(f"**ALAMAT:** {search_results_dict[0]['ALAMAT']}")
+                rt = search_results_dict[0]['RT']
                 st.markdown(f"**RT:** {search_results_dict[0]['RT']}")
+                rw = search_results_dict[0]['RW']
                 st.markdown(f"**RW:** {search_results_dict[0]['RW']}")
+                tps = search_results_dict[0]['TPS']
                 st.markdown(f"**TPS:** {search_results_dict[0]['TPS']}")
-            # st.dataframe(
-            #     search_results_dict,
-            #     column_config={
-            #         "NIK": st.column_config.NumberColumn(
-            #         width="medium",
-            #         format="%d",
-            #         )
-            #     },
-            #     hide_index=True,
-            #     use_container_width=True,
-            # )
+
+            with st.form(key="responden_form_1", clear_on_submit=True):
+                tanggal = st.date_input("Tanggal Data Diambil")
+                nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=None, placeholder="Pilih koordinator...")
+                nama_responden = st.text_input("Responden:red[*]", placeholder="Nama responden", value=nama)
+                nik = str(st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=nik, placeholder="NIK/No. KTP"))
+                dusun_jalan = st.text_input("Dusun/Jalan", value=alamat,placeholder="Alamat/dusun/jalan")
+                rt = st.number_input("RT:red[*]", value=rt, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
+                rw = st.number_input("RW:red[*]",value=rw, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
+                desa = st.selectbox("Desa :red[*]", [kelurahan])
+                no_selular = st.number_input("Nomor HP", min_value=0, value=0, placeholder="No. HP Responden", help="Tidak perlu menambahkan angka 0 (nol) di depan")
+                keterangan = st.text_area("Keterangan Tambahan", value="None", placeholder="Tambahkan keterangan")
+
+                # Mark mandatory fields
+                st.markdown(":red[*wajib diisi]")
+
+                submit_button = st.form_submit_button(label="Tambah Data", type="primary")
+
+                if submit_button:
+                    if not nama_koordinator or not nama_responden or not desa or not rt or not rw or not nik:
+                        st.toast("Pastikan formulir dengan tanda wajib untuk diisi.", icon='💽')
+                    elif existing_data["NIK"].str.contains(nik).any():
+                        st.toast("Nama responden sudah terdata di dalam database.", icon='💽')
+                    else:
+                        # Create a new row of respondent data
+                        responden_data = pd.DataFrame(
+                            [
+                                {
+                                    "TANGGAL": tanggal.strftime("%Y/%m/%d"),
+                                    "NAMA_KOORDINATOR": nama_koordinator.upper(),
+                                    "NAMA_RESPONDEN": nama_responden.upper(),
+                                    "NIK": str(nik),
+                                    "DUSUN_JALAN": dusun_jalan.upper(),
+                                    "RT": rt,
+                                    "RW": rw,
+                                    "DESA": desa.upper(),
+                                    "NO_SELULAR": str(no_selular),
+                                    "KETERANGAN": keterangan.upper(),
+                                }
+                            ]
+                        )
+                        # Add the new responden to the existing data
+                        update_df = pd.concat([existing_data, responden_data], ignore_index=True)
+
+                        # Update Google Sheets with new respondent data
+                        conn.update(worksheet="DATA", data=update_df)
+
+                        st.toast(f"Data responden {nama_responden} berhasil ditambahkan!", icon='🎉')
         else:
             st.warning("Data NIK tidak ditemukan")
+    else:
+        st.warning("Silahkan masukkan NIK yang valid untuk melakukan pencarian.")
