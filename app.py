@@ -332,22 +332,22 @@ elif action == "Cek dan Tambah Data":
 
         # Display the search results
         if not search_results.empty:
-            st.write("Hasil pencarian:")
-            with st.container(border=True):
-                nik = int(search_results_dict[0]['NIK'])
-                st.markdown(f"**NIK:** {nik}")
-                nama = search_results_dict[0]['NAMA']
-                st.markdown(f"**NAMA:** {nama}")
-                kelamin = search_results_dict[0]['KELAMIN']
-                st.markdown(f"JENIS KELAMIN: {search_results_dict[0]['KELAMIN']}")
-                alamat = search_results_dict[0]['ALAMAT']
-                st.markdown(f"**ALAMAT:** {search_results_dict[0]['ALAMAT']}")
-                rt = search_results_dict[0]['RT']
-                st.markdown(f"**RT:** {search_results_dict[0]['RT']}")
-                rw = search_results_dict[0]['RW']
-                st.markdown(f"**RW:** {search_results_dict[0]['RW']}")
-                tps = search_results_dict[0]['TPS']
-                st.markdown(f"**TPS:** {search_results_dict[0]['TPS']}")
+            # st.write("Hasil pencarian:")
+            # with st.container(border=True):
+            nik = int(search_results_dict[0]['NIK'])
+                # st.markdown(f"**NIK:** {nik}")
+            nama = search_results_dict[0]['NAMA']
+                # st.markdown(f"**NAMA:** {nama}")
+            kelamin = search_results_dict[0]['KELAMIN']
+                # st.markdown(f"JENIS KELAMIN: {search_results_dict[0]['KELAMIN']}")
+            alamat = search_results_dict[0]['ALAMAT']
+                # st.markdown(f"**ALAMAT:** {search_results_dict[0]['ALAMAT']}")
+            rt = search_results_dict[0]['RT']
+                # st.markdown(f"**RT:** {search_results_dict[0]['RT']}")
+            rw = search_results_dict[0]['RW']
+                # st.markdown(f"**RW:** {search_results_dict[0]['RW']}")
+            tps = search_results_dict[0]['TPS']
+                # st.markdown(f"**TPS:** {search_results_dict[0]['TPS']}")
 
             with st.form(key="responden_form_1", clear_on_submit=True):
                 tanggal = st.date_input("Tanggal Data Diambil")
