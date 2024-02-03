@@ -300,6 +300,7 @@ elif action == "Cek dan Tambah Data":
     - Cangkirsari
     - Jogosatru
     - Jumputrejo
+    - Kloposepuluh
     - Ngaresrejo
 
     Koordinator bisa cek data DPT dengan memasukkan NIK.
@@ -314,7 +315,7 @@ elif action == "Cek dan Tambah Data":
         return data
     
     kecamatan = st.selectbox("Pilih Kecamatan", ["Sukodono"],index=0,disabled=True)
-    kelurahan = st.selectbox("Pilih Kelurahan", ("ANGGASWANGI","BANGSRI","CANGKIRSARI","JOGOSATRU","JUMPUTREJO","NGARESREJO"))
+    kelurahan = st.selectbox("Pilih Kelurahan", ("ANGGASWANGI","BANGSRI","CANGKIRSARI","JOGOSATRU","JUMPUTREJO","KLOPOSEPULUH","NGARESREJO"))
 
     # search_nik = st.text_input(f"Cari NIK DPT {kelurahan}")
     search_nik = str(st.number_input("Cari NIK DPT", min_value=0, value=0, placeholder="NIK Responden"))
