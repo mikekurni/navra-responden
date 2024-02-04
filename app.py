@@ -18,6 +18,15 @@ hide_streamlit_style = """
 
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+# Hide stepper in st.number_input globally
+st.markdown("""
+<style>
+    button.step-up {display: none;}
+    button.step-down {display: none;}
+    div[data-baseweb] {border-radius: 4px;}
+</style>""",
+unsafe_allow_html=True)
+
 # Display Title and Description
 st.title("Mbak Navra Bersama Masyarakat", anchor=False)
 st.image(".statics/navra_1.jpeg", caption="Mbak Navra", width=250)
@@ -293,20 +302,23 @@ elif action == "Data per Koordinator":
 elif action == "Cek dan Tambah Data":
     st.header("Cari Data DPT Kecamatan Sukodono")
 
-    ngaresrejo = """
+    sukodono = """
     Khusus untuk Kelurahan:
-    - Anggaswangi
-    - Bangsri
-    - Cangkirsari
-    - Jogosatru
-    - Jumputrejo
-    - Kloposepuluh
-    - Ngaresrejo
+    - BANGSRI
+    - CANGKIRSARI
+    - JOGOSATRU
+    - KEBON AGUNG
+    - MASANGAN KULON
+    - NGARESREJO
+    - PADEMONEGORO
+    - PLUMBUNGAN
+    - SAMBUNGREJO
+    - SURUH
 
     Koordinator bisa cek data DPT dengan memasukkan NIK.
     """
-    with st.expander("Informasi"):
-        st.markdown(ngaresrejo)
+    with st.expander("Informasi", expanded=True):
+        st.markdown(sukodono)
     
 
     @st.cache_data
@@ -315,10 +327,12 @@ elif action == "Cek dan Tambah Data":
         return data
     
     kecamatan = st.selectbox("Pilih Kecamatan", ["Sukodono"],index=0,disabled=True)
-    kelurahan = st.selectbox("Pilih Kelurahan", ("ANGGASWANGI","BANGSRI","CANGKIRSARI","JOGOSATRU","JUMPUTREJO","KLOPOSEPULUH","NGARESREJO"))
+    kelurahan = st.selectbox("Pilih Kelurahan", ("BANGSRI","CANGKIRSARI","JOGOSATRU","KEBONAGUNG","MASANGANKULON","NGARESREJO","PADEMONEGORO","PLUMBUNGAN","SAMBUNGREJO","SURUH"),index=None,placeholder="Pilih Kelurahan/Desa")
 
     # search_nik = st.text_input(f"Cari NIK DPT {kelurahan}")
-    search_nik = str(st.number_input("Cari NIK DPT", min_value=0, value=0, placeholder="NIK Responden"))
+    search_nik = str(st.number_input("Cari NIK DPT",min_value=0,value=0,placeholder="NIK Responden"))
+
+    st.write("")
 
     # # Check if the search box is not empty
     if search_nik != "0":
@@ -350,11 +364,11 @@ elif action == "Cek dan Tambah Data":
             tps = search_results_dict[0]['TPS']
                 # st.markdown(f"**TPS:** {search_results_dict[0]['TPS']}")
 
-            with st.form(key="responden_form_1", clear_on_submit=True):
+            with st.form(key="responden_form_1", clear_on_submit=True, border=True):
                 tanggal = st.date_input("Tanggal Data Diambil")
                 nama_koordinator = st.selectbox("Koordinator:red[*]", options=list_koordinator, index=None, placeholder="Pilih koordinator...")
                 nama_responden = st.text_input("Responden:red[*]", placeholder="Nama responden", value=nama)
-                nik = str(st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=nik, placeholder="NIK/No. KTP"))
+                nik = str(st.number_input("Nomor Induk Kependudukan (NIK):red[*]", value=nik, placeholder="NIK/No. KTP",disabled=True))
                 dusun_jalan = st.text_input("Dusun/Jalan", value=alamat,placeholder="Alamat/dusun/jalan")
                 rt = st.number_input("RT:red[*]", value=rt, placeholder="RT", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
                 rw = st.number_input("RW:red[*]",value=rw, placeholder="RW", help="Tidak perlu menambahkan angka 0 (nol) di depan.")
